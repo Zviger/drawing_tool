@@ -1,4 +1,6 @@
 import sys
+
+
 class DrawingTool:
     def __init__(self, strem=None):
         self.canvas = None
@@ -88,8 +90,8 @@ class DrawingTool:
             self.bucket_fell(int(arguments[1]), int(arguments[2]), arguments[3])
 
     def read_commands_from_file(self, file_name):
-        with open(file_name) as f:
-            for s in f:
+        with open(file_name) as file:
+            for s in file:
                 self.parse_command_and_run(s)
 
 
