@@ -68,15 +68,18 @@ class DrawingTool:
             self.print_image()
 
     def color_nearest_pixel(self, x, y, prev_color, new_color):
-        self.canvas[y][x] = new_color
-        if x+1 < self.width and self.canvas[y][x+1] == prev_color:
-            self.color_nearest_pixel(x + 1, y, prev_color, new_color)
-        if x - 1 >= 0 and self.canvas[y][x-1] == prev_color:
-            self.color_nearest_pixel(x - 1, y, prev_color, new_color)
-        if y + 1 < self.height and self.canvas[y + 1][x] == prev_color:
-            self.color_nearest_pixel(x, y + 1, prev_color, new_color)
-        if y - 1 >= 0 and self.canvas[y - 1][x] == prev_color:
-            self.color_nearest_pixel(x, y - 1, prev_color, new_color)
+        points_stack = [(x, y)]
+        while points_stack:
+            _x, _y = points_stack.pop()
+            if _x+1 < self.width and self.canvas[_y][_x+1] == prev_color:
+                points_stack.append((_x + 1, _y))
+            if _x - 1 >= 0 and self.canvas[_y][_x-1] == prev_color:
+                points_stack.append((_x - 1, _y))
+            if _y + 1 < self.height and self.canvas[_y + 1][_x] == prev_color:
+                points_stack.append((_x, _y + 1))
+            if _y - 1 >= 0 and self.canvas[_y - 1][_x] == prev_color:
+                points_stack.append((_x, _y - 1))
+            self.canvas[_y][_x] = new_color
 
     def parse_command_and_run(self, command):
         arguments = list(command.split(" "))
@@ -92,7 +95,7 @@ class DrawingTool:
     def read_commands_from_file(self, file_name):
         with open(file_name) as file:
             for s in file:
-                self.parse_command_and_run(s)
+                self.parse_command_and_run(s.rstrip())
 
 
 if __name__ == "__main__":
