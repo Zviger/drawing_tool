@@ -2,11 +2,11 @@ import sys
 
 
 class DrawingTool:
-    def __init__(self, strem=None):
+    def __init__(self, stream=None):
         self.canvas = None
         self.width = 0
         self.height = 0
-        self.stream = strem
+        self.stream = stream
 
     def create_canvas(self, width, height):
         self.width = width
@@ -63,9 +63,12 @@ class DrawingTool:
             print("Please create canvas first")
 
     def bucket_fell(self, x, y, color, pr=True):
-        self.color_nearest_pixel(x - 1, y - 1, self.canvas[y - 1][x - 1], color)
-        if pr:
-            self.print_image()
+        if self.canvas:
+            self.color_nearest_pixel(x - 1, y - 1, self.canvas[y - 1][x - 1], color)
+            if pr:
+                self.print_image()
+        else:
+            print("Please create canvas first")
 
     def color_nearest_pixel(self, x, y, prev_color, new_color):
         points_stack = [(x, y)]
@@ -100,5 +103,5 @@ class DrawingTool:
 
 if __name__ == "__main__":
     with open("output.txt", "w") as f:
-        dt = DrawingTool(strem=f)
+        dt = DrawingTool(stream=f)
         dt.read_commands_from_file("input.txt")
