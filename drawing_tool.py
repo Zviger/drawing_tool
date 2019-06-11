@@ -11,7 +11,7 @@ class DrawingTool:
     def create_canvas(self, width, height):
         self.width = width
         self.height = height
-        self.canvas = [[0] * width for _ in range(height)]  # 0 - is nothing
+        self.canvas = [[" "] * width for _ in range(height)]
         self.print_image()
 
     def print_image(self):
@@ -23,10 +23,7 @@ class DrawingTool:
             for row in self.canvas:
                 print("|", end="")
                 for point in row:
-                    if point != 0:
-                        print(point, end="")
-                    else:
-                        print(" ", end="")
+                    print(point, end="")
                 print("|")
             print("-" * (self.width + 2))
         else:
@@ -44,8 +41,7 @@ class DrawingTool:
                     self.canvas[i][x1 - 1] = "x"
             else:
                 for i in range(x1 - 1, x2):
-                    self.canvas[y1 - 1][i] = "x" \
-                                             ""
+                    self.canvas[y1 - 1][i] = "x"
             if pr:
                 self.print_image()
         else:
@@ -84,16 +80,21 @@ class DrawingTool:
                 points_stack.append((_x, _y - 1))
             self.canvas[_y][_x] = new_color
 
-    def parse_command_and_run(self, command):
-        arguments = list(command.split(" "))
-        if arguments[0].lower() == "c":
-            self.create_canvas(int(arguments[1]), int(arguments[2]))
-        if arguments[0].lower() == "l":
-            self.create_line(int(arguments[1]), int(arguments[2]), int(arguments[3]), int(arguments[4]))
-        if arguments[0].lower() == "r":
-            self.create_rectangle(int(arguments[1]), int(arguments[2]), int(arguments[3]), int(arguments[4]))
-        if arguments[0].lower() == "b":
-            self.bucket_fell(int(arguments[1]), int(arguments[2]), arguments[3])
+    def parse_command_and_run(self, com_and_arg):
+        com_and_arg = list(com_and_arg.split(" "))
+        c = com_and_arg[0].lower()
+        if c == "b":
+            self.bucket_fell(*map(int, com_and_arg[1:-1]), com_and_arg[-1])
+        else:
+            arguments = list(map(int, com_and_arg[1:]))
+            if c == "c":
+                self.create_canvas(*arguments)
+            elif c == "l":
+                self.create_line(*arguments)
+            elif c == "r":
+                self.create_rectangle(*arguments)
+            elif c == "b":
+                self.bucket_fell(*arguments)
 
     def read_commands_from_file(self, file_name):
         with open(file_name) as file:
