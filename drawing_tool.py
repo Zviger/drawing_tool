@@ -67,17 +67,15 @@ class DrawingTool:
             print("Please create canvas first")
 
     def color_nearest_pixel(self, x, y, prev_color, new_color):
+        deltas = (-1, 0, 1, 0)
         points_stack = [(x, y)]
         while points_stack:
             _x, _y = points_stack.pop()
-            if _x+1 < self.width and self.canvas[_y][_x+1] == prev_color:
-                points_stack.append((_x + 1, _y))
-            if _x - 1 >= 0 and self.canvas[_y][_x-1] == prev_color:
-                points_stack.append((_x - 1, _y))
-            if _y + 1 < self.height and self.canvas[_y + 1][_x] == prev_color:
-                points_stack.append((_x, _y + 1))
-            if _y - 1 >= 0 and self.canvas[_y - 1][_x] == prev_color:
-                points_stack.append((_x, _y - 1))
+            for i in range(4):
+                dx = deltas[i]
+                dy = deltas[i - 1]
+                if self._is_ok(_x + dx, _y + dy) and self.canvas[_y + dy][_x + dx] == prev_color:
+                    points_stack.append((_x + dx, _y + dy))
             self.canvas[_y][_x] = new_color
 
     def parse_command_and_run(self, com_and_arg):
@@ -101,8 +99,14 @@ class DrawingTool:
             for s in file:
                 self.parse_command_and_run(s.rstrip())
 
+    def _is_ok(self, x, y):
+        if 0 <= x < self.width and 0 <= y < self.height:
+            return True
+        else:
+            return False
+
 
 if __name__ == "__main__":
     with open("output.txt", "w") as f:
-        dt = DrawingTool(stream=f)
+        dt = DrawingTool()
         dt.read_commands_from_file("input.txt")
